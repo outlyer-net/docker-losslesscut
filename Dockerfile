@@ -4,8 +4,8 @@ ARG app_version="3.47.1"
 # Bump if publishing a new image with the same app_version, reset to 1 with new app versions 
 ARG image_revision="1"
 # BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
-# Define a default value to be able to run plain docker build
-ARG TARGETPLATFORM="linux/amd64"
+# Do NOT define a default value or it will override what BuildKit sets
+ARG TARGETPLATFORM
 
 FROM jlesage/baseimage-gui:debian-11-v4 AS extract-stage
 ARG TARGETPLATFORM
