@@ -3,7 +3,9 @@
 
 [LosslessCut]: https://github.com/mifi/lossless-cut
 
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/outlyernet/losslesscut?sort=semver)
 [![Docker Image Size](https://img.shields.io/docker/image-size/outlyernet/losslesscut/latest)](https://hub.docker.com/r/outlyernet/losslesscut/tags)
+[![GitHub](https://img.shields.io/github/license/outlyer-net/docker-losslesscut)](https://github.com/outlyer-net/docker-losslesscut/blob/master/LICENSE)
 
 This is a Docker container for [LosslessCut].
 
