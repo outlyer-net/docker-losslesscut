@@ -1,4 +1,4 @@
-<!-- README base don jlesage's one for MKVToolNix -->
+<!-- README based on jlesage's one for MKVToolNix -->
 # Docker container for LosslessCut
 
 [LosslessCut]: https://github.com/mifi/lossless-cut
@@ -31,7 +31,6 @@ The swiss army knife of lossless video/audio editing
    * [User/Group IDs](#usergroup-ids)
    * [Accessing the GUI](#accessing-the-gui)
    * [Security](#security)
-      * [SSVNC](#ssvnc)
       * [Certificates](#certificates)
       * [VNC Password](#vnc-password)
    * [Shell Access](#shell-access)
