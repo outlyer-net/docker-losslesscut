@@ -25,35 +25,36 @@ MAJOR:=$(shell echo $(APP_VERSION) | cut -d. -f1)
 MAJOR_MINOR:=$(shell echo $(APP_VERSION) | cut -d. -f1-2)
 
 # Simple build on the given architecture
-# Tagged with :latest, LosslessCut's version and optionally LosslessCut's version + image revision
-# Don't add the docker image version unless it's bigger than 1
+# Tagged with :latest, LosslessCut's version and LosslessCut's version + image revision
 build:
 	docker build -t $(LABEL):$(TAG) \
 		-t $(LABEL):$(APP_VERSION) \
 		-t $(LABEL):$(MAJOR_MINOR) \
 		-t $(LABEL):$(MAJOR) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(APP_VERSION)$(REV_SUFFIX)) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX)) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(MAJOR)$(REV_SUFFIX)) \
+		-t $(LABEL):$(APP_VERSION)$(REV_SUFFIX) \
+		-t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX) \
+		-t $(LABEL):$(MAJOR)$(REV_SUFFIX) \
 		--build-arg=TARGETPLATFORM=linux/$(platform) .
 
 # Common buildx command template, build---something will pass --something to the command
 buildx-%:
 	docker buildx build \
-		$* \
+		$(subst noop,,$*) \
 		-t $(LABEL):$(TAG) \
 		-t $(LABEL):$(APP_VERSION) \
 		-t $(LABEL):$(MAJOR_MINOR) \
 		-t $(LABEL):$(MAJOR) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(APP_VERSION)$(REV_SUFFIX)) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX)) \
-		$(shell test $(IMAGE_REVISION) -le 1 || echo -t $(LABEL):$(MAJOR)$(REV_SUFFIX)) \
+		-t $(LABEL):$(APP_VERSION)$(REV_SUFFIX) \
+		-t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX) \
+		-t $(LABEL):$(MAJOR)$(REV_SUFFIX) \
 		--platform=linux/amd64,linux/arm/v7,linux/arm64 .
 
-# NOTE: The "buildx-\ " dependency is a way of passing no extra arguments to buildx-%
-buildx: buildx-\ 
+# NOTE: The "buildx-noop" dependency is a way of passing no extra arguments to buildx-%
+buildx: buildx-noop
 
 push: buildx---push
 
 # Importing/exporting multiplatform images doesn't work (yet?)
 #load: buildx---load
+
+.PHONY: build buildx push # DO NOT mark as phony buildx-* rules
