@@ -139,3 +139,8 @@ LABEL \
 
 # Define HOME to ease usage of the file chooser
 ENV HOME=/storage
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD \
+    pidof cinit \
+    && pidof losslesscut \
+    && nc -z -v 127.0.0.1 $WEB_LISTENING_PORT
