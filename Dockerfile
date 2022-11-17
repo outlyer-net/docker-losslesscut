@@ -136,3 +136,6 @@ LABEL \
       org.opencontainers.image.url="https://hub.docker.com/repository/docker/outlyernet/losslesscut" \
       org.opencontainers.image.source="https://github.com/outlyer-net/docker-losslesscut" \
       org.opencontainers.image.licenses="GPL-2.0"
+
+# Define HOME to ease usage of the file chooser
+ENV HOME=/storage
