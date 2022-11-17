@@ -5,16 +5,21 @@ ARG app_version="3.47.1"
 ARG image_revision="1"
 # BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
 # Do NOT define a default value or it will override what BuildKit sets
-ARG TARGETPLATFORM
+# Do NOT declare TARGETPLATFORM as an ARG before FROM either or it becomes empty
+#ARG TARGETPLATFORM
 
 FROM jlesage/baseimage-gui:debian-11-v4 AS extract-stage
 ARG TARGETPLATFORM
 ARG app_version
 ARG download_url_template="https://github.com/mifi/lossless-cut/releases/download/v${app_version}/LosslessCut-linux-#ARCH#.tar.bz2"
-#ARG download_url_template="https://github.com/mifi/lossless-cut/releases/latest/download/${app_tarball}"
+#ARG download_url_template="https://github.com/mifi/lossless-cut/releases/latest/download/LosslessCut-linux-#ARCH#.tar.bz2"
+
+# Fail early if TARGETPLATFORM isn't set
+RUN test -n "${TARGETPLATFORM}"
 
 # Note ADDing a local tarball automatically extracts it whereas a tarball url is downloaded AS-IS
 #ADD ${download_url} /
+
 # The LC_ALL is an attempt to prevent apt complaining about the locale
 # Deduce LosslessCut architecture suffix based on TARGETPLATFORM 
 RUN LC_ALL=C add-pkg \
