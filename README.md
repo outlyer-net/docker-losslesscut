@@ -3,7 +3,7 @@
 
 [LosslessCut]: https://github.com/mifi/lossless-cut
 
-[![Docker Image Size](https://img.shields.io/docker/image-size/outlyer-net/losslesscut/latest)](https://hub.docker.com/r/outlyer-net/losslesscut/tags)
+[![Docker Image Size](https://img.shields.io/docker/image-size/outlyernet/losslesscut/latest)](https://hub.docker.com/r/outlyernet/losslesscut/tags)
 
 This is a Docker container for [LosslessCut].
 
