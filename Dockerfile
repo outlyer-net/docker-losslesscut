@@ -3,29 +3,36 @@
 ARG app_version="3.47.1"
 # Bump if publishing a new image with the same app_version, reset to 1 with new app versions 
 ARG image_revision="1"
-# Platform name used by LosslessCut
-ARG app_platform="x64"
-ARG app_tarball="LosslessCut-linux-${app_platform}.tar.bz2"
-ARG download_url="https://github.com/mifi/lossless-cut/releases/download/v${app_version}/${app_tarball}"
-#ARG download_url="https://github.com/mifi/lossless-cut/releases/latest/download/${app_tarball}"
+# BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
+# Define a default value to be able to run plain docker build
+ARG TARGETPLATFORM="linux/amd64"
 
 FROM jlesage/baseimage-gui:debian-11-v4 AS extract-stage
-ARG app_tarball
-ARG download_url
+ARG TARGETPLATFORM
+ARG app_version
+ARG download_url_template="https://github.com/mifi/lossless-cut/releases/download/v${app_version}/LosslessCut-linux-#ARCH#.tar.bz2"
+#ARG download_url_template="https://github.com/mifi/lossless-cut/releases/latest/download/${app_tarball}"
 
 # Note ADDing a local tarball automatically extracts it whereas a tarball url is downloaded AS-IS
 #ADD ${download_url} /
-# The LC_ALL is to prevent apt complaining about the locale
+# The LC_ALL is an attempt to prevent apt complaining about the locale
+# Deduce LosslessCut architecture suffix based on TARGETPLATFORM 
 RUN LC_ALL=C add-pkg \
                 ca-certificates \
                 pbzip2 \
                 wget \
-    && wget --progress=dot:giga -O /${app_tarball} ${download_url} \
-    && tar -C / -I pbzip2 -xvf /${app_tarball}
+    && { \
+        [ $TARGETPLATFORM = linux/amd64 ] && echo x64 ; \
+        [ $TARGETPLATFORM = linux/arm64 ] && echo arm64 ; \
+        [ $TARGETPLATFORM = linux/arm/v7 ] && echo armv7l ; \
+    } \
+    | xargs -I '#ARCH#' \
+        wget --progress=dot:giga -O /app.tbz ${download_url_template} \
+    && tar -C / -I pbzip2 -xvf /app.tbz \
+    && mv /LosslessCut-linux-*/ /LosslessCut
 
 FROM jlesage/baseimage-gui:debian-11-v4 AS final-stage
 ARG app_icon="https://raw.githubusercontent.com/mifi/lossless-cut/master/src/icon.svg"
-ARG app_platform
 ARG app_version
 ARG image_revision
 
@@ -101,7 +108,7 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libxss1 \
       libxtst6
 
-COPY --from=extract-stage /LosslessCut-linux-${app_platform} /LosslessCut
+COPY --from=extract-stage /LosslessCut /LosslessCut
 
 # Sandboxing doesn't appear to work, Docker should be sandboxed enough though
 RUN echo '#!/bin/sh' > /startapp.sh \
@@ -115,3 +122,16 @@ RUN set-cont-env APP_NAME "LosslessCut" \
     && set-cont-env DOCKER_IMAGE_VERSION ${image_revision} \
     && APP_ICON_URL=$app_icon && \
        install_app_icon.sh "$APP_ICON_URL"
+
+VOLUME ["/config", "/storage"]
+
+# 5800: Web, 5900: VNC
+EXPOSE 5800/tcp 5900/tcp
+
+LABEL \
+      maintainer="Toni Corvera <outlyer@gmail.com>" \
+      org.opencontainers.image.title="Dockerized losslesscut" \
+      org.opencontainers.image.description="Docker container to make LosslessCut usable via web browser and VNC" \
+      org.opencontainers.image.version="$DOCKER_IMAGE_VERSION" \
+      org.opencontainers.image.url="https://hub.docker.com/repository/docker/outlyernet/losslesscut" \
+      org.opencontainers.image.source="https://github.com/outlyer-net/docker-losslesscut"
