@@ -128,6 +128,8 @@ VOLUME ["/config", "/storage"]
 # 5800: Web, 5900: VNC
 EXPOSE 5800/tcp 5900/tcp
 
+# Note the org.label-schema.* labels are inherited from the base image
+# TODO: Find out if it's worth overwriting them
 LABEL \
       maintainer="Toni Corvera <outlyer@gmail.com>" \
       org.opencontainers.image.title="Dockerized LosslessCut" \
