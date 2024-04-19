@@ -1,0 +1,66 @@
+---
+# Based on video "GitHub Packages. Containers in a GitHub repo?"" <https://www.youtube.com/watch?v=gqseP_wTZsk>
+# TODO: DockerHub integration, see e.g. https://github.com/docker/metadata-action
+
+name: Deploy image to GHCR
+
+# Runs on all pushes, all branches included
+# on: [push]
+on:
+  push:
+    # Note these are supposed to be OR'ed, i.e. when branch is main or a tag like v* is pushed
+    branches:
+      - 'master'
+#    tags:
+#      # This doesn't work: - 'v?[0-9]+.[0-9]+.[0-9]+([0-9]+)?'
+#      - 'v*.*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # FIXME: :latest isn't added by default althought it should??? https://github.com/docker/metadata-action?tab=readme-ov-file#latest-tag
+          #         adding a raw tag as a workaround
+          tags: |
+            type=raw,value=latest
+            type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=tag
+            type=ref,event=branch,suffix=-branch
+      
+      # Standard build action:
+      #- name: Build and push Docker image
+      #  uses: docker/build-push-action@v5
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: ${{ steps.meta.outputs.tags }}
+      #    labels: ${{ steps.meta.outputs.labels }}
+      # Non-standard using the makefile:
+      - name: Build
+        # IMAGE_NAME must match the github repository name
+        run: make push REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
