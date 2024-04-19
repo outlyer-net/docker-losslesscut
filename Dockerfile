@@ -1,6 +1,6 @@
 # See https://github.com/jlesage/docker-baseimage-gui
 
-ARG app_version="3.47.1"
+ARG app_version="3.59.1"
 # Bump if publishing a new image with the same app_version, reset to 1 with new app versions 
 ARG image_revision="1"
 # BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
@@ -37,11 +37,10 @@ RUN LC_ALL=C add-pkg \
     && mv /LosslessCut-linux-*/ /LosslessCut
 
 FROM jlesage/baseimage-gui:debian-11-v4 AS final-stage
-ARG app_icon="https://raw.githubusercontent.com/mifi/lossless-cut/master/src/icon.svg"
+ARG app_icon="https://raw.githubusercontent.com/mifi/lossless-cut/master/src/renderer/src/icon.svg"
 ARG app_version
 ARG image_revision
-
-# Missing libraries as of v3.47.1
+# Missing libraries as of v3.59.1, adjusted to Debian 11
 #  See the helper script 'generate_dependencies_list.bash'
 RUN LC_ALL="C.UTF-8" add-pkg \
       libasound2 \
@@ -57,11 +56,14 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libcairo-gobject2 \
       libcups2 \
       libdatrie1 \
+      libdrm2 \
       libepoxy0 \
       libffi7 \
       libfontconfig1 \
       libfreetype6 \
       libfribidi0 \
+      libgbm1 \
+      libgcrypt20 \
       libgdk-pixbuf-2.0-0 \
       libglib2.0-0 \
       libgmp10 \
@@ -72,9 +74,12 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libharfbuzz0b \
       libhogweed6 \
       libidn2-0 \
+      libjpeg62-turbo \
       libk5crypto3 \
       libkrb5-3 \
       libkrb5support0 \
+      liblz4-1 \
+      libmd0 \
       libmount1 \
       libnettle8 \
       libnspr4 \
@@ -86,6 +91,7 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libpcre2-8-0 \
       libpixman-1-0 \
       libpng16-16 \
+      libsystemd0 \
       libtasn1-6 \
       libthai0 \
       libunistring2 \
@@ -93,10 +99,11 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libwayland-client0 \
       libwayland-cursor0 \
       libwayland-egl1 \
+      libwayland-server0 \
       libx11-6 \
-      libx11-xcb1 \
       libxau6 \
       libxcb1 \
+      libxcb-randr0 \
       libxcb-render0 \
       libxcb-shm0 \
       libxcomposite1 \
@@ -110,8 +117,14 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libxkbcommon0 \
       libxrandr2 \
       libxrender1 \
-      libxss1 \
-      libxtst6
+      libzstd1
+
+# some manual additions, mostly from  v3.47.1
+RUN LC_ALL="C.UTF-8" add-pkg \
+      libgl1 \
+      libx11-xcb1
+#      #libxss1 \
+#      #libxtst6
 
 COPY --from=extract-stage /LosslessCut /LosslessCut
 
