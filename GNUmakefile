@@ -5,7 +5,7 @@
 # $ make buildx - Build multiplatform images
 # $ make push   - Push multiplatform images to the registry
 
-LABEL=outlyernet/losslesscut
+IMAGE_NAME=outlyernet/losslesscut
 TAG:=latest
 
 # Platform using docker naming scheme: amd64, arm/v7, arm64 (with "linux/" as prefix)
@@ -23,6 +23,9 @@ REV_SUFFIX:=-v$(IMAGE_REVISION)
 
 MAJOR:=$(shell echo $(APP_VERSION) | cut -d. -f1)
 MAJOR_MINOR:=$(shell echo $(APP_VERSION) | cut -d. -f1-2)
+
+REGISTRY:=docker.io
+LABEL=$(REGISTRY)/$(IMAGE_NAME)
 
 # Simple build on the given architecture
 # Tagged with :latest, LosslessCut's version and LosslessCut's version + image revision
