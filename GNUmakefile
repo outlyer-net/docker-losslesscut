@@ -57,6 +57,10 @@ buildx: buildx-noop
 
 push: buildx---push
 
+# A new builder is required to build multiarch images
+multiarch-builder:
+	docker buildx create --name multiarch --use
+
 # Importing/exporting multiplatform images doesn't work (yet?)
 #load: buildx---load
 

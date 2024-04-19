@@ -63,4 +63,4 @@ jobs:
       # Non-standard using the makefile:
       - name: Build
         # IMAGE_NAME must match the github repository name
-        run: make push REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make multiarch-builder && make push REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
