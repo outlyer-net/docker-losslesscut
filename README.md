@@ -298,4 +298,4 @@ Having troubles with the container or have questions?  Please
 
 For other great Dockerized applications by *jlesage*, see https://jlesage.github.io/docker-apps.
 
-[create a new issue]: https://github.com/outlyernet/docker-losslesscut/issues
+[create a new issue]: https://github.com/outlyer-net/docker-losslesscut/issues
