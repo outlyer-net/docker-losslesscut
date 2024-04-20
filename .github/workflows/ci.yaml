@@ -2,15 +2,14 @@
 # Based on video "GitHub Packages. Containers in a GitHub repo?"" <https://www.youtube.com/watch?v=gqseP_wTZsk>
 # TODO: DockerHub integration, see e.g. https://github.com/docker/metadata-action
 
-# Deploy to GHCR a multi-arch image when tagged
+# Builds for the current architecture on each push
 
-name: Deploy image to GHCR
+name: Build on push
 
 on:
   push:
-    tags:
-      # This doesn't work: - 'v?[0-9]+.[0-9]+.[0-9]+([0-9]+)?'
-      - '*.*'
+    branches:
+      - master
 
 env:
   REGISTRY: ghcr.io
@@ -60,4 +59,4 @@ jobs:
       # Non-standard using the makefile:
       - name: Build
         # IMAGE_NAME must match the github repository name
-        run: make multiarch-builder && make push REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
