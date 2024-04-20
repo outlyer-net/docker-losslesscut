@@ -296,6 +296,7 @@ creation (e.g. `losslesscut`).
 Having troubles with the container or have questions?  Please
 [create a new issue].
 
-For other great Dockerized applications by *jlesage*, see https://jlesage.github.io/docker-apps.
+For other great Dockerized applications by *[jlesage][jlesage]*, see https://jlesage.github.io/docker-apps.
 
+[jlesage]: https://github.com/jlesage
 [create a new issue]: https://github.com/outlyer-net/docker-losslesscut/issues
