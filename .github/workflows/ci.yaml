@@ -50,14 +50,15 @@ jobs:
             type=ref,event=branch,suffix=-branch
       
       # Standard build action:
-      #- name: Build and push Docker image
-      #  uses: docker/build-push-action@v5
-      #  with:
-      #    context: .
-      #    push: true
-      #    tags: ${{ steps.meta.outputs.tags }}
-      #    labels: ${{ steps.meta.outputs.labels }}
-      # Non-standard using the makefile:
       - name: Build
-        # IMAGE_NAME must match the github repository name
-        run: make REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          #labels: ${{ steps.meta.outputs.labels }}
+
+      # Non-standard using the makefile:
+      #- name: Build
+      #  # IMAGE_NAME must match the github repository name
+      #  run: make REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }}
