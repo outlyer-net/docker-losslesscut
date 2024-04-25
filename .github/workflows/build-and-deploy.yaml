@@ -1,0 +1,102 @@
+---
+
+# Deploy to this repository and Docker Hub a multi-arch image
+# when the repository is tagged
+
+name: Deploy image to registry
+
+on:
+  push:
+    tags:
+      - '[0-9].*'
+  pull_request:
+    branches:
+      - master
+
+# This workflow relies on:
+# - Repository variables (accessible var vars.NAME)
+#   - DOCKERHUB_USERNAME
+#   - DOCKERHUB_IMAGE 
+# - Repository secrets (accessible via secrets.NAME)
+#   - DOCKERHUB_TOKEN
+
+env:
+  # REGISTRY: ghcr.io # set below
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-multiarch-and-push:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Define registry
+        if: ${{ github.server_url == 'https://github.com' }}
+        run: echo 'REGISTRY=ghcr.io' | tee -a $GITHUB_ENV 
+
+      - name: Redefine registry if not on GitHub # i.e. Forgejo, Gitea, ... They provide a similar environment
+        if: ${{ github.server_url != 'https://github.com' }}
+        run: echo ${{ github.server_url }} | sed 's#^https://#REGISTRY=#' | tee -a $GITHUB_ENV 
+      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_IMAGE }}
+          # FIXME: :latest wasn't being added by default althought it should??? https://github.com/docker/metadata-action?tab=readme-ov-file#latest-tag
+          #         adding a raw tag as a workaround
+          tags: |
+            type=raw,value=latest
+            type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=tag
+            type=ref,event=branch,suffix=-branch
+      
+      # Standard build action:
+      #- name: Build and push Docker image
+      #  uses: docker/build-push-action@v5
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: ${{ steps.meta.outputs.tags }}
+      #    labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Prepare Docker Hub additional tags
+        id: dockerhub_tags
+        run: |
+          make print-tags \
+          | sed -e 's/^/extra_tags=/' \
+          | tee -a "$GITHUB_OUTPUT"
+
+      # Non-standard using the makefile:
+      - name: Build
+        # IMAGE_NAME must match the github repository name
+        run: |
+          make multiarch-builder && \
+          make push \
+            ADD_TAGS="${{ steps.meta.outputs.tags }} ${{ steps.dockerhub_tags.outputs.extra_tags }}" \
+            REGISTRY=${{ env.REGISTRY }} \
+            IMAGE_NAME=${{ env.IMAGE_NAME }}
