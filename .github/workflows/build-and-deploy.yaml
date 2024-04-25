@@ -12,6 +12,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch: # will allow running manually
 
 # This workflow relies on:
 # - Repository variables (accessible var vars.NAME)
