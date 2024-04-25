@@ -82,13 +82,25 @@ jobs:
           make print-tags \
           | sed -e 's/^/extra_tags=/' \
           | tee -a "$GITHUB_OUTPUT"
+      
+      - name: Create multiarch builder
+        run: make multiarch-builder
+      
+      # Decide whether we'll push
+      # \-> Don't push on pull requests
+      - name: Set-up action
+        id: action
+        run: |
+          if test ${{ github.event_name }} != 'pull_request' ; then
+            echo 'rule=push'
+          else
+            echo 'rule=buildx'
+          fi | tee -a "$GITHUB_OUTPUT"
 
-      # Non-standard using the makefile:
-      - name: Build
+      - name: Build/Push
         # IMAGE_NAME must match the github repository name
         run: |
-          make multiarch-builder && \
-          make push \
+          make ${{ steps.action.outputs.rule }} \
             ADD_TAGS="${{ steps.meta.outputs.tags }} ${{ steps.dockerhub_tags.outputs.extra_tags }}" \
             REGISTRY=${{ env.REGISTRY }} \
             IMAGE_NAME=${{ env.IMAGE_NAME }}
