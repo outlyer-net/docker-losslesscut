@@ -76,15 +76,6 @@ jobs:
             type=ref,event=tag
             type=ref,event=branch,suffix=-branch
       
-      # Standard build action:
-      #- name: Build and push Docker image
-      #  uses: docker/build-push-action@v5
-      #  with:
-      #    context: .
-      #    push: true
-      #    tags: ${{ steps.meta.outputs.tags }}
-      #    labels: ${{ steps.meta.outputs.labels }}
-
       - name: Prepare Docker Hub additional tags
         id: dockerhub_tags
         run: |
