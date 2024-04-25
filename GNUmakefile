@@ -7,6 +7,9 @@
 
 IMAGE_NAME=outlyernet/losslesscut
 TAG:=latest
+REGISTRY:=docker.io
+# Additional tags (passed verbatim to docker build), separated by spaces
+ADD_TAGS:=
 
 # Platform using docker naming scheme: amd64, arm/v7, arm64 (with "linux/" as prefix)
 #  derived from the uname
@@ -24,33 +27,36 @@ REV_SUFFIX:=-v$(IMAGE_REVISION)
 MAJOR:=$(shell echo $(APP_VERSION) | cut -d. -f1)
 MAJOR_MINOR:=$(shell echo $(APP_VERSION) | cut -d. -f1-2)
 
-REGISTRY:=docker.io
 LABEL=$(REGISTRY)/$(IMAGE_NAME)
+
+ALL_TAGS=$(LABEL):$(TAG) \
+	        $(LABEL):$(APP_VERSION) \
+	        $(LABEL):$(MAJOR_MINOR) \
+	        $(LABEL):$(MAJOR) \
+	        $(LABEL):$(APP_VERSION)$(REV_SUFFIX) \
+	        $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX) \
+	        $(LABEL):$(MAJOR)$(REV_SUFFIX) \
+			$(ADD_TAGS)
+# prepend -t to each tag
+ALL_TAGS_PARAM=$(foreach tag,$(ALL_TAGS),-t $(tag))
 
 # Simple build on the given architecture
 # Tagged with :latest, LosslessCut's version and LosslessCut's version + image revision
 build:
-	docker build -t $(LABEL):$(TAG) \
-		-t $(LABEL):$(APP_VERSION) \
-		-t $(LABEL):$(MAJOR_MINOR) \
-		-t $(LABEL):$(MAJOR) \
-		-t $(LABEL):$(APP_VERSION)$(REV_SUFFIX) \
-		-t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX) \
-		-t $(LABEL):$(MAJOR)$(REV_SUFFIX) \
+	docker build \
+		$(ALL_TAGS_PARAM) \
 		--build-arg=TARGETPLATFORM=linux/$(platform) .
 
 # Common buildx command template, build---something will pass --something to the command
 buildx-%:
 	docker buildx build \
 		$(subst noop,,$*) \
-		-t $(LABEL):$(TAG) \
-		-t $(LABEL):$(APP_VERSION) \
-		-t $(LABEL):$(MAJOR_MINOR) \
-		-t $(LABEL):$(MAJOR) \
-		-t $(LABEL):$(APP_VERSION)$(REV_SUFFIX) \
-		-t $(LABEL):$(MAJOR_MINOR)$(REV_SUFFIX) \
-		-t $(LABEL):$(MAJOR)$(REV_SUFFIX) \
-		--platform=linux/amd64,linux/arm/v7,linux/arm64 .
+		$(ALL_TAGS_PARAM) \
+	 	--platform=linux/amd64,linux/arm/v7,linux/arm64 .
+
+# Prints the list of tags to be used by build/push 
+print-tags:
+	@echo $(ALL_TAGS)
 
 # NOTE: The "buildx-noop" dependency is a way of passing no extra arguments to buildx-%
 buildx: buildx-noop
