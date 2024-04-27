@@ -43,8 +43,6 @@ The swiss army knife of lossless video/audio editing
 
 ## Quick Start
 
-**NOTE**: The Docker command provided in this quick start is given as an example and parameters should be adjusted to your needs.
-
 Launch the LosslessCut docker container with the following command:
 ```shell
 docker run -d \
@@ -62,13 +60,16 @@ Where:
 Browse to `http://your-host-ip:5800` to access the LosslessCut GUI.
 Files from the host appear under the `/storage` folder in the container.
 
-**NOTE**: For additional documentation see the [base image](https://github.com/jlesage/docker-baseimage-gui).
+**Notes:**
+* This Docker command is given as an example and parameters should be adjusted to your needs.
+* The image is available in both Docker Hub as `outlyernet/losslesscut` and the GitHub Container Registry as `ghcr.io/outlyer-net/docker-losslesscut`
+* For additional documentation see the [base image](https://github.com/jlesage/docker-baseimage-gui).
 
 ## Usage
 
 ```shell
 docker run [-d] \
-    --name=losslesscut \
+    [--name=losslesscut] \
     [-e <VARIABLE_NAME>=<VALUE>]... \
     [-v <HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]]... \
     [-p <HOST_PORT>:<CONTAINER_PORT>]... \
@@ -76,10 +77,11 @@ docker run [-d] \
 ```
 | Parameter | Description |
 |-----------|-------------|
-| -d        | Run the container in the background.  If not set, the container runs in the foreground. |
-| -e        | Pass an environment variable to the container.  See the [Environment Variables](#environment-variables) section for more details. |
-| -v        | Set a volume mapping (allows to share a folder/file between the host and the container).  See the [Data Volumes](#data-volumes) section for more details. |
-| -p        | Set a network port mapping (exposes an internal container port to the host).  See the [Ports](#ports) section for more details. |
+| `-d`      | Run the container in the background.  If not set, the container runs in the foreground. |
+| `-e`      | Pass an environment variable to the container.  See the [Environment Variables](#environment-variables) section for more details. |
+| `-v`      | Set a volume mapping (allows to share a folder/file between the host and the container).  See the [Data Volumes](#data-volumes) section for more details. |
+| `-p`      | Set a network port mapping (exposes an internal container port to the host).  See the [Ports](#ports) section for more details. |
+| `--name`  | Assign a name to the container |
 
 ### Environment Variables
 
@@ -161,7 +163,7 @@ Make sure to adjust according to your needs.  Note that only mandatory network
 ports are part of the example.
 
 ```yaml
-version: '3'
+---
 services:
   losslesscut:
     image: outlyernet/losslesscut
@@ -178,7 +180,8 @@ services:
 ## Docker Image Versioning
 
 Each release of a Docker image is versioned using [semantic versioning](https://semver.org) matching the version of the bundled LosslessCut.\
-Additional tags for *major* and *major.minor* versions are also provided.\
+Additional tags for *major* and *major.minor* versions are also provided.
+\
 In case the image is updated it will have an additional `-v<NUMBER>` indicating the new version.
 
 Example tags:
