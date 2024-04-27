@@ -4,3 +4,4 @@
 GNUmakefile
 LICENSE
 *.md
+helper-scripts/*
