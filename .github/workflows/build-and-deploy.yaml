@@ -2,6 +2,7 @@
 
 # Deploy to this repository and Docker Hub a multi-arch image
 # when the repository is tagged
+# Note on pull requests the image will be built but not actually pushed
 
 name: Deploy image to registry
 
