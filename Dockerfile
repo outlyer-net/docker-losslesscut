@@ -1,6 +1,6 @@
 # See https://github.com/jlesage/docker-baseimage-gui
 
-ARG app_version="3.59.1"
+ARG app_version="3.61.0"
 # Bump if publishing a new image with the same app_version, reset to 1 with new app versions 
 ARG image_revision="1"
 # BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
