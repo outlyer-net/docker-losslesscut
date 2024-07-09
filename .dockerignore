@@ -5,3 +5,4 @@ GNUmakefile
 LICENSE
 *.md
 helper-scripts/*
+docker-compose.yaml

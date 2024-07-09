@@ -1,0 +1,21 @@
+---
+
+# This is an example compose file, adjust to your needs
+
+name: losslesscut
+
+services:
+  losslesscut:
+    image: outlyernet/losslesscut
+    build: .
+    restart: unless-stopped
+    ports:
+      - 5800:5800/tcp
+    volumes:
+      # Configuration directory, beware of permissions
+      #- ./config:/config:rw
+      # Video files will be looked for here
+      - ${HOME?}:/storage:rw
+      # Alternative path matching the host
+      - ${HOME}:${HOME}:rw
+
