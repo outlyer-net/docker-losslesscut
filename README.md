@@ -45,7 +45,7 @@ The swiss army knife of lossless video/audio editing
 
 Launch the LosslessCut docker container with the following command:
 ```shell
-docker run -d \
+docker run --rm -d \
     --name=losslesscut \
     -p 5800:5800 \
     -v /path/to/data/losslesscut:/config:rw \
@@ -68,7 +68,7 @@ Files from the host appear under the `/storage` folder in the container.
 ## Usage
 
 ```shell
-docker run [-d] \
+docker run [--rm] [-d] \
     [--name=losslesscut] \
     [-e <VARIABLE_NAME>=<VALUE>]... \
     [-v <HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]]... \
@@ -77,6 +77,7 @@ docker run [-d] \
 ```
 | Parameter | Description |
 |-----------|-------------|
+| `--rm`    | Destroy the container once it stops. |
 | `-d`      | Run the container in the background.  If not set, the container runs in the foreground. |
 | `-e`      | Pass an environment variable to the container.  See the [Environment Variables](#environment-variables) section for more details. |
 | `-v`      | Set a volume mapping (allows to share a folder/file between the host and the container).  See the [Data Volumes](#data-volumes) section for more details. |
