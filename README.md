@@ -30,6 +30,7 @@ The swiss army knife of lossless video/audio editing
       * [Environment Variables](#environment-variables)
       * [Data Volumes](#data-volumes)
       * [Ports](#ports)
+      * [Audio playback](#audio-playback)
       * [Changing Parameters of a Running Container](#changing-parameters-of-a-running-container)
    * [Docker Compose File](#docker-compose-file)
    * [Docker Image Versioning](#docker-image-versioning)
@@ -136,6 +137,16 @@ container cannot be changed, but you are free to use any port on the host side.
 |------|-----------------|-------------|
 | 5800 | Optional | Port to access the application's GUI via the web interface.  Mapping to the host is optional if access through the web interface is not wanted.  For a container not using the default bridge network, the port can be changed with the `WEB_LISTENING_PORT` environment variable. |
 | 5900 | Optional | Port to access the application's GUI via the VNC protocol.  Mapping to the host is optional if access through the VNC protocol is not wanted.  For a container not using the default bridge network, the port can be changed with the `VNC_LISTENING_PORT` environment variable. |
+
+### Audio playback
+
+Audio can be played when accessed via web browser.
+
+To enable it set the environment variable `WEB_AUDIO` to `1`.
+
+You'll also need to enable audio from within the browser via the three-dots menu overlaid on the left hand of the window.
+
+See the [Environment Variables section](#environment-variables)
 
 ### Changing Parameters of a Running Container
 
