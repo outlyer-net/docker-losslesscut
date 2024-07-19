@@ -91,6 +91,7 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libpcre2-8-0 \
       libpixman-1-0 \
       libpng16-16 \
+      libpulse0 \
       libsystemd0 \
       libtasn1-6 \
       libthai0 \
@@ -117,7 +118,6 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libxkbcommon0 \
       libxrandr2 \
       libxrender1 \
-      libpulse-dev \
       libzstd1
 
 # some manual additions, mostly from  v3.47.1
