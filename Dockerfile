@@ -2,7 +2,7 @@
 
 ARG app_version="3.61.1"
 # Bump if publishing a new image with the same app_version, reset to 1 with new app versions 
-ARG image_revision="1"
+ARG image_revision="2"
 # BUILDPLATFORM and TARGETPLATFORM are defined when using BuildKit (i.e. docker buildx)
 # Do NOT define a default value or it will override what BuildKit sets
 # Do NOT declare TARGETPLATFORM as an ARG before FROM either or it becomes empty
