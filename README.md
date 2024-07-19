@@ -170,25 +170,9 @@ docker rm losslesscut
 
 ## Docker Compose File
 
-Here is an example of a `docker-compose.yml` file that can be used with [Docker Compose](https://docs.docker.com/compose/overview/).
+An example [`docker-compose.yaml`](./blob/docker-compose.yaml) file is provided for use with [Docker Compose](https://docs.docker.com/compose/overview/).
 
-Make sure to adjust according to your needs.  Note that only mandatory network
-ports are part of the example.
-
-```yaml
----
-services:
-  losslesscut:
-    image: outlyernet/losslesscut
-    ports:
-      - "5800:5800" # Web UI
-    volumes:
-      - "./losslesscut:/config:rw"
-      - "$HOME:/storage:rw"
-    environment:
-      DARK_MODE: "1"
-      SECURE_CONNECTION: "1"
-```
+Make sure to adjust according to your needs.  Note that only mandatory network ports are part of the example.
 
 ## Docker Image Versioning
 

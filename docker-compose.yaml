@@ -18,4 +18,7 @@ services:
       - ${HOME?}:/storage:rw
       # Alternative path matching the host
       - ${HOME}:${HOME}:rw
-
+    environment:
+      WEB_AUDIO: ${WEB_AUDIO:-1}
+      DARK_MODE: ${DARK_MODE:-1}
+      SECURE_CONNECTION: ${SECURE_CONNECTION:-1}
