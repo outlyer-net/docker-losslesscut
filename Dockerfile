@@ -129,6 +129,12 @@ RUN LC_ALL="C.UTF-8" add-pkg \
 
 COPY --from=extract-stage /LosslessCut /LosslessCut
 
+# Workaround for LosslessCut on arm not containing ffmpeg
+RUN test -x /LosslessCut/resources/ffmpeg \
+    || ( LC_ALL=C add-pkg ffmpeg \
+        && ln -s /usr/bin/ffmpeg /usr/bin/ffprobe /LosslessCut/resources/ \
+    )
+
 # Sandboxing doesn't appear to work, Docker should be sandboxed enough though
 RUN echo '#!/bin/sh' > /startapp.sh \
     && echo 'exec /LosslessCut/losslesscut' --no-sandbox >> /startapp.sh \
