@@ -153,7 +153,7 @@ LABEL \
       maintainer="Toni Corvera <outlyer@gmail.com>" \
       org.opencontainers.image.title="Dockerized LosslessCut" \
       org.opencontainers.image.description="Docker container to make LosslessCut usable via web browser and VNC" \
-      org.opencontainers.image.version="$DOCKER_IMAGE_VERSION" \
+      org.opencontainers.image.version="${image_revision}}" \
       org.opencontainers.image.url="https://hub.docker.com/repository/docker/outlyernet/losslesscut" \
       org.opencontainers.image.source="https://github.com/outlyer-net/docker-losslesscut" \
       org.opencontainers.image.licenses="GPL-2.0"
