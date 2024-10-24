@@ -8,7 +8,7 @@ ARG image_revision="2"
 # Do NOT declare TARGETPLATFORM as an ARG before FROM either or it becomes empty
 #ARG TARGETPLATFORM
 
-FROM jlesage/baseimage-gui:debian-11-v4 AS extract-stage
+FROM jlesage/baseimage-gui:debian-12-v4 AS extract-stage
 ARG TARGETPLATFORM
 ARG app_version
 ARG download_url_template="https://github.com/mifi/lossless-cut/releases/download/v${app_version}/LosslessCut-linux-#ARCH#.tar.bz2"
@@ -36,7 +36,7 @@ RUN LC_ALL=C add-pkg \
     && tar -C / -I pbzip2 -xvf /app.tbz \
     && mv /LosslessCut-linux-*/ /LosslessCut
 
-FROM jlesage/baseimage-gui:debian-11-v4 AS final-stage
+FROM jlesage/baseimage-gui:debian-12-v4 AS final-stage
 ARG app_icon="https://raw.githubusercontent.com/mifi/lossless-cut/master/src/renderer/src/icon.svg"
 ARG app_version
 ARG image_revision
@@ -58,7 +58,7 @@ RUN LC_ALL="C.UTF-8" add-pkg \
       libdatrie1 \
       libdrm2 \
       libepoxy0 \
-      libffi7 \
+      libffi8 \
       libfontconfig1 \
       libfreetype6 \
       libfribidi0 \
